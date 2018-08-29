@@ -12,6 +12,11 @@ mongoose.connection.once('open', function(){
 	console.log("db connected")
 });
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
+
 
 app.get('/', function(req, res){
 	res.send("Hello World");
@@ -26,6 +31,52 @@ app.get('/books', function(req, res){
 		else{
 			console.log(books);
 			res.json(books);
+		}
+	})
+})
+
+app.get('/books/:id', function(req, res){
+	console.log("getting one book");
+	Book.findOne({
+		_id: req.params.id
+	})
+	.exec(function(err, book){
+		if(err){
+			res.send('error accured');
+		}
+		else{
+			console.log(book);
+			res.json(book);
+		}
+	})
+})
+
+app.post('/book', function(req, res){
+	var newBook = new Book();
+
+	newBook.author = req.body.author;
+	newBook.title = req.body.title;
+	newBook.category = req.body.category;
+
+	newBook.save(function(err, book){
+		if(err){
+			res.send("error saving book");
+		}
+		else{
+			console.log(book);
+			res.send(book);
+		}
+	});
+});
+
+app.post('/book2', function(req, res){
+	Book.create(req.body, function(err, book){
+		if(err){
+			res.send("error saving book");
+		}
+		else{
+			console.log(book);
+			res.send(book);
 		}
 	})
 })
