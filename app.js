@@ -51,6 +51,7 @@ app.get('/books/:id', function(req, res){
 	})
 })
 
+// post book by creating new instance of Book() model
 app.post('/book', function(req, res){
 	var newBook = new Book();
 
@@ -69,6 +70,8 @@ app.post('/book', function(req, res){
 	});
 });
 
+// post book by Model.create() as describe in mongoose
+
 app.post('/book2', function(req, res){
 	Book.create(req.body, function(err, book){
 		if(err){
@@ -77,6 +80,32 @@ app.post('/book2', function(req, res){
 		else{
 			console.log(book);
 			res.send(book);
+		}
+	})
+})
+
+// put update book from books
+
+app.put('/book/:id' , function(req, res){
+	Book.findOneAndUpdate({_id: req.params.id}, {$set: {title:req.body.title}}, {upsert:true}, function(err, updated_book_tilte){
+		if(err){
+			console.log("Error accured updating");
+		}
+		else{
+			console.log(updated_book_tilte);
+			res.send(updated_book_tilte);
+		}
+	})
+})
+
+app.delete('/book/:id' , function(req, res){
+	Book.findOneAndRemove({_id: req.params.id}, function(err,remove_book){
+		if(err){
+			console.log("Error accured removing");
+		}
+		else{
+			console.log(remove_book);
+			res.status(204);
 		}
 	})
 })
